@@ -69,7 +69,7 @@ To start a three-node cluster
   }
   // Set peer list to the other nodes in the cluster.
   // Note that they need to be started separately as well.
-  n := raft.StartNode(c, []raft.Peer{{ID: 0x02}, {ID: 0x03}})
+  
 ```
 
 Start a single node cluster, like so:
