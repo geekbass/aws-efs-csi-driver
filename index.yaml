@@ -16,8 +16,8 @@ entries:
     - name: leakingtapan
     name: aws-efs-csi-driver
     sources:
-    - https://github.com/kubernetes-sigs/aws-efs-csi-driver
+    - https://github.com/geekbass/aws-efs-csi-driver
     urls:
-    - https://github.com/kubernetes-sigs/aws-efs-csi-driver/releases/download/v1.0.0/helm-chart.tgz
-    version: 0.1.0
+    - https://github.com/geekbass/aws-efs-csi-driver/releases/download/v1.0.2/helm-chart.tgz
+    version: 0.1.1
 generated: "2020-12-31T14:52:38.5867514-05:00"
