@@ -1,0 +1,22 @@
+# Add 1 or more Persistent Volume(s) to already existing EFS
+{{- range $k, $v := .Values.peristentVolumes }}
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  {{- if $v.annotations }}
+  annotations: {{ toYaml $v.annotations | nindent 4 }}
+  {{- end }}
+  name: {{ $k }}
+spec:
+  capacity:
+    storage: {{ $v.storageCapacity }}
+  volumeMode: Filesystem
+  accessModes:
+    - ReadWriteMany
+  persistentVolumeReclaimPolicy: {{ $v.pvReclaimPolicy | default "Retain" }}
+  storageClassName: {{ $v.storageClass }}
+  csi:
+    driver: efs.csi.aws.com
+    volumeHandle: {{ $v.fileSystemId }}
+---
+{{- end }}

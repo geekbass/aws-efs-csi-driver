@@ -3,12 +3,10 @@
 # Declare variables to be passed into your templates.
 
 replicaCount: 2
-
 image:
   repository: amazon/aws-efs-csi-driver
   tag: "v1.0.0"
   pullPolicy: IfNotPresent
-
 sidecars:
   livenessProbeImage:
     repository: quay.io/k8scsi/livenessprobe
@@ -19,13 +17,10 @@ sidecars:
   csiProvisionerImage:
     repository: k8s.gcr.io/sig-storage/csi-provisioner
     tag: "v2.0.2"
-
 imagePullSecrets: []
 nameOverride: ""
 fullnameOverride: ""
-
 podAnnotations: {}
-
 resources: {}
   # We usually recommend not to specify default resources and to leave this as a conscious
   # choice for the user. This also increases chances charts run on environments with little
@@ -37,19 +32,13 @@ resources: {}
   # requests:
   #   cpu: 100m
   #   memory: 128Mi
-
 nodeSelector: {}
-
 tolerations: []
-
 affinity: {}
-
 node:
   podAnnotations: {}
   tolerations: []
-
 logLevel: 5
-
 hostAliases: {}
   # for cross VPC EFS, you need to poison or overwrite the DNS for the efs volume as per
   # https://docs.aws.amazon.com/efs/latest/ug/efs-different-vpc.html#wt6-efs-utils-step3
@@ -59,7 +48,6 @@ hostAliases: {}
   # "fs-01234567":
   #   ip: 10.10.2.2
   #   region: us-east-2
-
 dnsPolicy: ""
 dnsConfig: {}
   # Example config which uses the AWS nameservers
@@ -67,7 +55,6 @@ dnsConfig: {}
   # dnsConfig:
   #   nameservers:
   #     - 169.254.169.253
-
 serviceAccount:
   # Specifies whether a service account should be created
   create: true
@@ -75,3 +62,55 @@ serviceAccount:
   ## Enable if EKS IAM for SA is used
   #  eks.amazonaws.com/role-arn: arn:aws:iam::111122223333:role/efs-csi-role
   name: efs-csi-controller-sa
+
+# Optional: You may use the values below *IF* you have already created an EFS for use and you know
+# its filesystemId. As mentioned, the efs-csi-driver does not take care of creating the EFS at
+# this time. Use the below to create PVs, PVCs and/or storageclass at the time of deploying the
+# efs-csi-driver to you cluster so your services may immediately take advantage of use.
+peristentVolumes: {}
+  # If you would like to have PVs created ahead of time for your services to use. As mentinoned
+  # this requires that the EFS be created prior to this. Be aware that some charts may already. 
+  # Only accessMode being used at the moment is ReadWriteMany as this is the most often reason
+  # for using EFS. See below for how to create multiple PVs.
+  # pv1:
+  #   annotations:
+  #     foo: bar
+  #     provisioned-by: efs-csi-driver
+  #   storageCapacity: 5Gi
+  #   storageClass: efs-storageclass
+  #   pvReclaimPolicy: Delete
+  #   fileSystemId: fs-blahblah
+  # pv2:
+  #   storageCapacity: 10Gi
+  #   storageClass: efs-sc
+  #   fileSystemId: fs-woohoo
+persistentVolumeClaims: {}
+  # Creating Claims for the above PVs. Keep in mind that some charts will take care of this for you
+  # so only use this if you need Claims created.
+  # pvc1:
+  #   namespace: superduper
+  #   annotations: 
+  #     foo: bar
+  #     provisioned-by: efs-csi-driver
+  #   labels:
+  #     app: foo
+  #     release: bar
+  #   storageClass: efs-sc
+  #   storageCapacity: 5Gi
+  # pvc2:
+  #   namespace: default
+  #   labels:
+  #     app: bar
+  #     release: foo
+  #   storageClass: efs-storageclass
+  #   storageCapacity: 10Gi
+storageClass: {}
+  # Define the name of the storageClass to be created with the efs csi driver. Default is efs-sc.
+  # enabled: false
+  # name: efs-storageclass
+  # annotations:
+  #   provisioned-by: efs-csi-driver
+  # labels:
+  #   foo: bar
+  #   bar: foo
+
