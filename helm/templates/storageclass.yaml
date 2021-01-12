@@ -1,0 +1,14 @@
+# Adding a Storage Class
+{{- if .Values.storageClass.enabled }}
+kind: StorageClass
+apiVersion: storage.k8s.io/v1
+metadata:
+  {{- if .Values.storageClass.annotations }}
+  annotations: {{ toYaml .Values.storageClass.annotations | nindent 4 }}
+  {{- end }}
+  {{- if .Values.storageClass.labels }}
+  labels: {{ toYaml .Values.storageClass.labels | nindent 4 }}
+  {{- end }}
+  name: {{ .Values.storageClass.name | default "efs-sc" }}
+provisioner: efs.csi.aws.com
+{{- end }}

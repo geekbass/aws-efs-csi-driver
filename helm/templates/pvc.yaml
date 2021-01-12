@@ -1,0 +1,22 @@
+# Add 1 or more Persistent Volume Claims(s) to already existing EFS.
+{{- range $k, $v := .Values.persistentVolumeClaims }}
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  {{- if $v.annotations }}
+  annotations: {{ toYaml $v.annotations | nindent 4 }}
+  {{- end }}
+  {{- if $v.labels }}
+  labels: {{ toYaml $v.labels | nindent 4 }}
+  {{- end }}
+  name: {{ $k }}
+  namespace: {{ $v.namespace | default "default" }}
+spec:
+  accessModes:
+    - ReadWriteMany
+  storageClassName: {{ $v.storageClass }}
+  resources:
+    requests:
+      storage: {{ $v.storageCapacity }}
+---
+{{- end }}
